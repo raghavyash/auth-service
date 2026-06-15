@@ -17,10 +17,11 @@ public class UserLoginAudit {
     private Long id;
     @Column(name = "USER_EMAIL", nullable = false, unique = true)
     private String userEmail;
-    @Column(name = "IP_ADDRESS")
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_LOGIN_ID")
     private UserLogin userLogin;
+    @Column(name = "IP_ADDRESS")
     private String ipAddress;
     @Column(name = "STATUS")
     private String status;  //  'success', 'failed_password', 'user_not_found', 'suspended'
