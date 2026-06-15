@@ -9,26 +9,21 @@ import com.rsnvtech.erp.edu.util.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+
     @Autowired
     private EmailService emailService;
     @Autowired
     private JwtService jwtService;
     @Autowired
     private AuthenticationManager authenticationManager;
-    @Autowired
-    private RestTemplate restTemplate;
+
     @Autowired
     private UserLoginRepository userLoginRepository;
 
@@ -61,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
 
         var user = UserLogin.builder()
                 .userEmail(request.getUserEmail())
-                .userPassword(passwordEncoder.encode(request.getPwd()))
+                .userPassword(request.getPwd())
 
                  // Defaults new registrations to standard USER
                 .isValid(false)  // Keep disabled until email is verified

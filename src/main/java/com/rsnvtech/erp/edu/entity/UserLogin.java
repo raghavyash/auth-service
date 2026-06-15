@@ -40,4 +40,7 @@ public class UserLogin {
     @Column(name = "EXPIRY_DATE", nullable = false)
     private LocalDateTime expiryDate;
 
+    @Column(name = "CREATE_DATE")
+    private LocalDateTime createDate;
+
 }

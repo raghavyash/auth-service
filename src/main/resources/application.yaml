@@ -13,7 +13,6 @@ spring:
       ddl-auto: update # Options: none, update, create, create-drop, validate
     show-sql: true
   application:
-    name: api-gateway
     security:
       jwt:
         # Use a secure, HS256-compatible, Base64-encoded key string in production
@@ -22,6 +21,11 @@ spring:
         access-token-expiration: 900000
         # 7 days in milliseconds
         refresh-token-expiration: 604800000
+# Mandatory property to trigger autoconfiguration
+
+  mail:
+     host: smtp.gmail.com
+     port: 587
 
 
 
