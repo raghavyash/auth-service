@@ -1,6 +1,8 @@
 package com.rsnvtech.erp.edu.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +12,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "user_login_audit")
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class UserLoginAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
