@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @RestController
 @RequestMapping("/api/v1/auth")
 @Slf4j
@@ -21,11 +22,14 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+
+
     @PostMapping("/login")
     public ResponseEntity<AuthTokenResponse> login(@RequestBody @Valid AuthRequest request) {
-        AuthTokenResponse authTokenResponse= authService.login(request);
+        AuthTokenResponse authTokenResponse = authService.login(request);
         return ResponseEntity.ok(authTokenResponse);
     }
+
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody @Valid AuthRequest request) {
         authService.register(request);
@@ -33,4 +37,4 @@ public class AuthController {
     }
 
 
-}
+    }

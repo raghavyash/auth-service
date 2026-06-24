@@ -1,6 +1,5 @@
 package com.rsnvtech.erp.edu.service;
 
-import com.rsnvtech.erp.edu.config.JwtService;
 import com.rsnvtech.erp.edu.constants.Role;
 import com.rsnvtech.erp.edu.entity.UserLogin;
 import com.rsnvtech.erp.edu.entity.UserLoginAudit;
@@ -10,11 +9,10 @@ import com.rsnvtech.erp.edu.repository.UserLoginAuditRepository;
 import com.rsnvtech.erp.edu.repository.UserLoginRepository;
 import com.rsnvtech.erp.edu.util.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -23,10 +21,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Autowired
     private EmailService emailService;
-    @Autowired
-    private JwtService jwtService;
-    @Autowired
-    private AuthenticationManager authenticationManager;
+
 
     @Autowired
     private UserLoginRepository userLoginRepository;
@@ -36,18 +31,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthTokenResponse login(AuthRequest request) {
         AuthTokenResponse authTokenResponse;
-        UserLogin u= userLoginRepository.findByUserEmail(request.getUserEmail());
-        if (u!= null) {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getUserEmail(), request.getPwd())
-            );
 
-            // user = userLoginRepository.findByUserEmail(request.getUserEmail());
-            var jwtToken = jwtService.generateAccessToken(u);
-            return new AuthTokenResponse(jwtToken);
-        } else {
-            throw new IllegalArgumentException("Email already registered");
-        }
+            return null;
+
 
     }
 
@@ -63,10 +49,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void register(AuthRequest request) {
-       UserLogin u= userLoginRepository.findByUserEmail(request.getUserEmail());
-        if (u!= null) {
-            throw new IllegalArgumentException("Email already registered");
-        }
+       Optional<UserLogin> u= userLoginRepository.findByUserEmail(request.getUserEmail());
         String token = UUID.randomUUID().toString();
         var userLogin = UserLogin.builder()
                 .userEmail(request.getUserEmail())
@@ -84,15 +67,6 @@ public class AuthServiceImpl implements AuthService {
 
 
 
-    private  AuthTokenResponse authenticate(AuthRequest request) {
-        // Automatically checks if user is enabled; throws exception if disabled
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUserEmail(), request.getPwd())
-        );
 
-        var user = userLoginRepository.findByUserEmail(request.getUserEmail());
-        var jwtToken = jwtService.generateAccessToken(user);
-        return new AuthTokenResponse(jwtToken);
-    }
 
 }

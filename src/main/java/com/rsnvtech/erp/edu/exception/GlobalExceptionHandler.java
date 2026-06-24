@@ -2,8 +2,7 @@ package com.rsnvtech.erp.edu.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
+
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,15 +23,7 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.GONE, ex.getMessage());
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<Map<String, Object>> handleBadCredentials(BadCredentialsException ex) {
-        return buildResponse(HttpStatus.UNAUTHORIZED, "Invalid username or password");
-    }
 
-    @ExceptionHandler(DisabledException.class)
-    public ResponseEntity<Map<String, Object>> handleDisabledAccount(DisabledException ex) {
-        return buildResponse(HttpStatus.FORBIDDEN, "Please verify your email before logging in");
-    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationErrors(MethodArgumentNotValidException ex) {
