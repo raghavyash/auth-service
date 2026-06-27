@@ -1,8 +1,5 @@
 package com.rsnvtech.erp.edu.service;
 
-import com.rsnvtech.erp.edu.constants.Role;
-import com.rsnvtech.erp.edu.entity.UserLogin;
-import com.rsnvtech.erp.edu.entity.UserLoginAudit;
 import com.rsnvtech.erp.edu.model.AuthRequest;
 import com.rsnvtech.erp.edu.model.AuthTokenResponse;
 import com.rsnvtech.erp.edu.repository.UserLoginAuditRepository;
@@ -10,10 +7,6 @@ import com.rsnvtech.erp.edu.repository.UserLoginRepository;
 import com.rsnvtech.erp.edu.util.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -49,20 +42,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void register(AuthRequest request) {
-       Optional<UserLogin> u= userLoginRepository.findByUserEmail(request.getUserEmail());
-        String token = UUID.randomUUID().toString();
-        var userLogin = UserLogin.builder()
-                .userEmail(request.getUserEmail())
-                .userPassword(request.getPwd()).token(token)
-                .role(Role.USER).createDate(LocalDateTime.now()).expiryDate(LocalDateTime.now())
-                 // Defaults new registrations to standard USER
-                .isValid(false)  // Keep disabled until email is verified
-                .build();
-        userLoginRepository.save(userLogin);
-       var userLoginAudit = UserLoginAudit.builder().userLogin(userLogin).userEmail(userLogin.getUserEmail())
-                       .status("Active").createDate(LocalDateTime.now()).build();
-       userLoginAuditRepository.save(userLoginAudit);
-        emailService.sendVerificationEmail(userLogin.getUserEmail(), token);
+
     }
 
 

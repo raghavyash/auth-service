@@ -1,17 +1,16 @@
 package com.rsnvtech.erp.edu.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Data
-@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AuthResponse {
-    private String responseMsg;
-    private String responseCode;
+    private String token;
+    private String refreshToken;
 
-    public AuthResponse(String responseMsg, String responseCode) {
-    this.responseMsg=responseMsg;
-    this.responseCode=responseCode;
-    }
 }
