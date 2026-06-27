@@ -13,13 +13,13 @@ import java.util.List;
 
 public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
-    private  UserRepository repository;
+    private  UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
 
-        var user = repository.findByUsername(username)
+        var user = userRepository.findByUsername(username)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found"));
 

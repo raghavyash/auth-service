@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @Entity
 @Table(name = "tokens")
 @Data
@@ -17,13 +19,13 @@ public class Token {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 1000)
+    @Column(length = 1000,unique = true, nullable = false)
     private String token;
 
     private boolean revoked;
 
     private boolean expired;
-
+    private Instant expiryDate;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

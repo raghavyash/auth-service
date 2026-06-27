@@ -1,24 +1,18 @@
 package com.rsnvtech.erp.edu.controller;
 
 import com.rsnvtech.erp.edu.config.JwtService;
-import com.rsnvtech.erp.edu.constants.Role;
+import com.rsnvtech.erp.edu.entity.Token;
 import com.rsnvtech.erp.edu.entity.User;
 import com.rsnvtech.erp.edu.model.AuthRequest;
 import com.rsnvtech.erp.edu.model.AuthResponse;
-import com.rsnvtech.erp.edu.model.AuthTokenResponse;
+import com.rsnvtech.erp.edu.model.RefreshTokenRequest;
 import com.rsnvtech.erp.edu.model.RegisterRequest;
-import com.rsnvtech.erp.edu.repository.UserRepository;
-import com.rsnvtech.erp.edu.service.AuthService;
 import com.rsnvtech.erp.edu.service.AuthenticationService;
+import com.rsnvtech.erp.edu.service.RefreshTokenService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,59 +24,47 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 public class AuthController {
-   /* private final UserRepository repository;
 
-    private final PasswordEncoder passwordEncoder;
-
+    private final AuthenticationService authenticationService;
+    private final RefreshTokenService refreshTokenService;
     private final JwtService jwtService;
 
-    private final AuthenticationManager authenticationManager;*/
-    private final AuthenticationService service;
-
     @PostMapping("/register")
-    public AuthResponse register(
-            @Valid @RequestBody RegisterRequest request) {
-
-        return service.register(request);
+    public String register(@Valid @RequestBody AuthRequest request) {
+        return authenticationService.register(request);
     }
 
     @PostMapping("/login")
-    public AuthResponse login(
-            @RequestBody AuthRequest request) {
-
-        return service.authenticate(request);
+    public AuthResponse login(@RequestBody AuthRequest request) {
+        return authenticationService.login(request);
     }
-   /* @PostMapping("/register")
-    public String register(
-            @RequestBody AuthRequest request) {
 
-        User user = User.builder()
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(
-                        request.getPassword()))
-                .role(Role.USER)
-                .build();
-        repository.save(user);
+    @PostMapping("/logout")
+    public String logout(@RequestBody RefreshTokenRequest request) {
 
-        return "User registered successfully";
-    }*/
-
-    /*@PostMapping("/login")
-    public AuthResponse login(
-            @RequestBody AuthRequest request) {
-
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()
-                ));
-
-        String token =
-                jwtService.generateToken(
-                        request.getUsername());
-
-        return new AuthResponse(token);
-    }*/
-
-
+        Token token = refreshTokenService.verifyToken(request.getRefreshToken());
+        if (token != null) {
+            refreshTokenService.revokeToken(token);
+            return "Logged out successfully";
+        }
+        return "Not Logged out successfully";
     }
+
+   /* @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refreshToken(
+            @RequestBody RefreshTokenRequest request) {
+
+        Token refreshToken = refreshTokenService.verifyToken(request.getRefreshToken());
+        User user = refreshToken.getUser();
+        String accessToken = jwtService.generateToken(user);
+        refreshTokenService.revokeToken(refreshToken);
+
+        Token newRefreshToken = refreshTokenService.saveRefreshToken(user);
+
+        return ResponseEntity.ok(AuthResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(newRefreshToken.getToken())
+                .build()
+        );
+    }*/
+}
