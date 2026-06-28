@@ -38,7 +38,10 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5' // Uses Jackson for JSON parsing
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-
+// Source: https://mvnrepository.com/artifact/com.bucket4j/bucket4j-core
+    implementation("com.bucket4j:bucket4j-core:8.10.1")
+    // Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-redis
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     //implementation 'org.flywaydb:flyway-core'
     //implementation 'org.flywaydb:flyway-mysql'
 }
