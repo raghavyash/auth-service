@@ -12,6 +12,7 @@ import com.rsnvtech.erp.edu.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authManager;
+    private final AccountLockService accountLockService;
     @Autowired
     private  RefreshTokenService refreshTokenService;
 
@@ -44,24 +46,39 @@ public class AuthenticationService {
 
     public AuthResponse login(AuthRequest request) {
 
-        authManager.authenticate(new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()
-                ));
+
         User user = userRepository
                 .findByUsername(request.getUsername())
                 .orElseThrow();
+        if (!user.isAccountNonLocked()) {
+            boolean unlocked = accountLockService.unlockWhenTimeExpired(user);
 
-        String accessToken = jwtService.generateToken(user);
-        Token refreshToken =refreshTokenService.saveRefreshToken(user);
-        return AuthResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken.getToken())
-                .build();
+            if (!unlocked) {
+                throw new RuntimeException(
+                        "Account locked. Try again later."
+                );
+            }
+        }
+        try {
+            authManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    request.getUsername(),
+                    request.getPassword()
+            ));
+
+            String accessToken = jwtService.generateToken(user);
+            Token refreshToken = refreshTokenService.saveRefreshToken(user);
+            return AuthResponse.builder()
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken.getToken())
+                    .build();
+
+        } catch (BadCredentialsException ex) {
+            accountLockService.increaseFailedAttempts(user);
+
+            throw new RuntimeException("Invalid credentials");
+        }
+
+
     }
-
-
-
-
 
 }

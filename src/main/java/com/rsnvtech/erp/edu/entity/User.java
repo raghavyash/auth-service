@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
 @Data
@@ -26,4 +28,10 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    private int failedAttempts;
+
+    private boolean accountNonLocked = true;;
+
+    private LocalDateTime lockTime;
 }
