@@ -63,8 +63,8 @@ public class JwtService {
 
     private boolean isTokenExpired(String token) {
 
-        Date expiration = Jwts.parser()
-                .setSigningKey(getSignKey())
+        Date expiration = Jwts.parserBuilder()
+                .setSigningKey(getSignKey()).build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getExpiration();

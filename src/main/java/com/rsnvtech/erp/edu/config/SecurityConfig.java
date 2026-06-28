@@ -23,6 +23,8 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
 
     private final CustomUserDetailsService customUserDetailsService;
+    private final RateLimitFilter rateLimitFilter;
+    private final RedisRateLimitFilter redisRateLimitFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -38,7 +40,13 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
 
                 .userDetailsService(customUserDetailsService)
-
+               /* .addFilterBefore(rateLimitFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                )*/
+                 .addFilterBefore(
+                        redisRateLimitFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

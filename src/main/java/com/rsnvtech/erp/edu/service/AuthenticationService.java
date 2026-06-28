@@ -51,6 +51,7 @@ public class AuthenticationService {
         User user = userRepository
                 .findByUsername(request.getUsername())
                 .orElseThrow();
+
         String accessToken = jwtService.generateToken(user);
         Token refreshToken =refreshTokenService.saveRefreshToken(user);
         return AuthResponse.builder()
